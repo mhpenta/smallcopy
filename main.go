@@ -151,31 +151,31 @@ func getTextFiles(dir string, ignoredPatterns []glob.Glob) []string {
 }
 
 func isTextFile(filename string) bool {
-    textExtensions := []string{
-        ".txt", ".md", ".py", ".go", ".js", ".ts", ".tsx", 
-        ".html", ".css", ".xml", ".json", ".yaml", ".yml", 
-        ".sql", ".jsx"
-    }
-    ext := filepath.Ext(filename)
-    for _, textExt := range textExtensions {
-        if ext == textExt {
-            return true
-        }
-    }
-    return false
+	textExtensions := []string{
+		".txt", ".md", ".py", ".go", ".js", ".ts", ".tsx",
+		".html", ".css", ".xml", ".json", ".yaml", ".yml",
+		".sql", ".jsx",
+	}
+	ext := filepath.Ext(filename)
+	for _, textExt := range textExtensions {
+		if ext == textExt {
+			return true
+		}
+	}
+	return false
 }
 
 func getCommentStyle(ext string) string {
-    switch ext {
-    case ".py":
-        return "#"
-    case ".go", ".js", ".ts", ".tsx", ".jsx":
-        return "//"
-    case ".sql":
-        return "--"
-    default:
-        return "#"
-    }
+	switch ext {
+	case ".py":
+		return "#"
+	case ".go", ".js", ".ts", ".tsx", ".jsx":
+		return "//"
+	case ".sql":
+		return "--"
+	default:
+		return "#"
+	}
 }
 
 func censorBashCommands(content []byte) []byte {
