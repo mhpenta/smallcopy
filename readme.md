@@ -52,3 +52,16 @@ In the directory you want to copy, run:
 smallcopy
 ```
 
+### Skip Additional Directories
+
+To skip additional directories, use the `-skip` flag with comma-separated directory names:
+
+```bash
+smallcopy - skip="temp_files,secrets,fixtures"
+```
+
+Examples:
+- Skip a single directory: `-skip="temp_files"`
+- Skip multiple directories: `-skip="secrets,private_data,temp_files"`
+- Skip directories using glob patterns: `-skip="*_test,docs/*"`
+

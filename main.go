@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -45,13 +46,24 @@ var defaultIgnores = []string{
 }
 
 func main() {
+	skipDirsFlag := flag.String("skip", "", "Additional directories to skip, comma-separated")
+	flag.Parse()
+
+	var additionalSkips []string
+	if *skipDirsFlag != "" {
+		additionalSkips = strings.Split(*skipDirsFlag, ",")
+		for i, dir := range additionalSkips {
+			additionalSkips[i] = strings.TrimSpace(dir)
+		}
+	}
+
 	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Println("Error getting current directory:", err)
 		return
 	}
 
-	ignoredPatterns := getIgnoredPatterns(dir)
+	ignoredPatterns := getIgnoredPatterns(dir, additionalSkips)
 	files := getTextFiles(dir, ignoredPatterns)
 
 	var output strings.Builder
@@ -87,12 +99,23 @@ func main() {
 	fmt.Println("Content copied to clipboard successfully! Total bytes:", output.Len())
 }
 
-func getIgnoredPatterns(dir string) []glob.Glob {
+func getIgnoredPatterns(dir string, additionalSkips []string) []glob.Glob {
 	patterns := readGitignore(dir)
+
 	for _, ignore := range defaultIgnores {
 		g, _ := glob.Compile(ignore)
 		patterns = append(patterns, g)
 	}
+
+	for _, skip := range additionalSkips {
+		g, err := glob.Compile(skip)
+		if err == nil {
+			patterns = append(patterns, g)
+		} else {
+			fmt.Printf("Warning: Invalid skip pattern '%s': %v\n", skip, err)
+		}
+	}
+
 	return patterns
 }
 
